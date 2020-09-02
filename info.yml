@@ -22,13 +22,13 @@
 
 # configuration of the app
 configuration:
-  framerange_start:
+  framerange_default_start:
     type: int
-    description: Start of your frame range at the start of a Houdini session.
+    description: The app will use this as a default frame range start value if one can't be found in Shotgun.
     default_value: 1001
-  framerange_end:
+  framerange_default_end:
     type: int
-    description: End of your frame range at the start of a Houdini session.
+    description: The app will use this as a default frame range end value if one can't be found in Shotgun.
     default_value: 1240
 
 # engines this app supports
