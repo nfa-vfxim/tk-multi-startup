@@ -13,3 +13,11 @@ tk-houdini-startup is a Shotgun Toolkit app that allows you to add some logic to
     - type: `integer`
     - The app will use this as a default frame range end value if one can't be found in Shotgun.
     - default value: `1240`
+- `execute_at_startup_hook`
+    - type: `hook`
+    - A hook that will be called at the start of a Houdini session.
+    - default value: `{self}\hooks\startup.py`
+- `execute_at_context_change_hook`
+    - type: `hook`
+    - A hook that will be called after a change of context.
+    - default value: `{self}\hooks\context.py`
