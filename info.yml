@@ -24,20 +24,20 @@
 configuration:
   framerange_default_start:
     type: int
-    description: The app will use this as a default frame range start value if one can't be found in Shotgun.
+    description: The app will use this as a default frame range start value..
     default_value: 1001
   framerange_default_end:
     type: int
-    description: The app will use this as a default frame range end value if one can't be found in Shotgun.
+    description: The app will use this as a default frame range end value.
     default_value: 1240
   execute_at_startup_hook:
     type: hook
     description: A hook that will be called at the start of a Houdini session.
-    default_value: "{self}/hooks/startup.py"  
+    default_value: "{self}/{engine_name}_startup.py"  
   execute_at_context_change_hook:
     type: hook
     description: A hook that will be called after a change of context.
-    default_value: "{self}/hooks/context.py"
+    default_value: "{self}/{engine_name}_context.py"
 
 # engines this app supports
 supported_engines: [tk-houdini]
