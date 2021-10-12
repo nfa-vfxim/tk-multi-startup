@@ -1,4 +1,4 @@
-c![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/nfa-vfxim/tk-multi-startup?include_prereleases)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/nfa-vfxim/tk-multi-startup?include_prereleases)
 ![GitHub](https://img.shields.io/github/license/nfa-vfxim/tk-multi-startup)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
