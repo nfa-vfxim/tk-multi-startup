@@ -14,13 +14,14 @@
 
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
 import sgtk
+
 
 class TkMultiStartup(sgtk.platform.Application):
     def init_app(self):
@@ -29,6 +30,9 @@ class TkMultiStartup(sgtk.platform.Application):
         # execute the hook at startup method
         try:
             self.execute_hook_method("execute_at_startup_hook", "startup")
-        except:
-            msg = "A hook has not been found for this engine. Create one and configure it."
+        except Exception as e:
+            msg = (
+                "A hook has not been found for this engine. Create one and configure it. %s"
+                % str(e)
+            )
             self.logger.error(msg)

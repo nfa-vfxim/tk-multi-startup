@@ -14,7 +14,7 @@
 
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -25,30 +25,35 @@ import hou
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
+
 class Startup(HookBaseClass):
     def startup(self):
         """This method will be called at the start of a new Houdini session."""
 
-        frame_start = self._getDefaultFrameRange()[0]
-        frame_end = self._getDefaultFrameRange()[1]
+        # Setting FPS
+        fps = self._get_default_fps
+        self._set_fps(fps)
 
-        self._setFrameRange(frame_start, frame_end)
+        # Setting Frame Range
+        frame_start = self._get_default_frame_range()[0]
+        frame_end = self._get_default_frame_range()[1]
+
+        self._set_frame_range(frame_start, frame_end)
 
     # private methods
-
-    def _setFrameRange(self, frameRangeStart, frameRangeEnd):
+    def _set_frame_range(self, frame_range_start, frame_range_end):
         """Set the Houdini frame range and playback range to the input data."""
-        
+
         # set the frame range to frameRangeStart - frameRangeEnd
-        hou.playbar.setFrameRange(frameRangeStart, frameRangeEnd)
+        hou.playbar.setFrameRange(frame_range_start, frame_range_end)
 
         # set the playback range to frameRangeStart - frameRangeEnd
-        hou.playbar.setPlaybackRange(frameRangeStart, frameRangeEnd) 
+        hou.playbar.setPlaybackRange(frame_range_start, frame_range_end)
 
-        # set the playbar cursor to the first frame
-        hou.setFrame(frameRangeStart)
+        # set the timeline to the first frame
+        hou.setFrame(frame_range_start)
 
-    def _getDefaultFrameRange(self):
+    def _get_default_frame_range(self):
         """Get the configured frame range integers."""
 
         # get an instance of the app itself
@@ -59,9 +64,34 @@ class Startup(HookBaseClass):
 
         # populate frame_range with settings
         try:
-            frame_range.append(app.get_setting("framerange_default_start"))
-            frame_range.append(app.get_setting("framerange_default_end"))
-        except:
-            self.logger.error("An error occured while getting the default configured frame range. Make sure the configuration for tk-houdini-startup is correct.")
+            frame_range.append(app.get_setting("frame_range_default_start"))
+            frame_range.append(app.get_setting("frame_range_default_end"))
+        except Exception as e:
+            self.logger.error(
+                "An error occurred while getting the default configured frame range. Make sure the configuration for "
+                "tk-houdini-startup is correct. %s" % str(e)
+            )
 
         return frame_range
+
+    @staticmethod
+    def _set_fps(fps):
+        hou.setFps(fps)
+
+    @property
+    def _get_default_fps(self):
+        """Get the configured fps integer."""
+
+        # get an instance of the app itself
+        app = self.parent
+
+        # get fps setting
+        try:
+            fps = app.get_setting("fps_default")
+            return fps
+
+        except Exception as e:
+            self.logger.error(
+                "An error occurred while getting the default configured frame range. Make sure the configuration for "
+                "tk-maya-startup is correct. %s" % str(e)
+            )

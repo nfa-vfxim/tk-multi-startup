@@ -14,7 +14,7 @@
 
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -22,17 +22,21 @@
 
 # configuration of the app
 configuration:
-  framerange_default_start:
+  frame_range_default_start:
     type: int
     description: The app will use this as a default frame range start value..
     default_value: 1001
-  framerange_default_end:
+  frame_range_default_end:
     type: int
     description: The app will use this as a default frame range end value.
     default_value: 1240
+  fps_default:
+    type: int
+    description: Default fps to use when opening engines.
+    default_value: 25
   execute_at_startup_hook:
     type: hook
-    description: A hook that will be called at the start of a Houdini session.
+    description: A hook that will be called at the start of a session.
     default_value: "{self}/{engine_name}_startup.py"  
   execute_at_context_change_hook:
     type: hook
@@ -40,14 +44,14 @@ configuration:
     default_value: "{self}/{engine_name}_context.py"
 
 # engines this app supports
-supported_engines: [tk-houdini]
+supported_engines: ['tk-houdini', 'tk-maya']
 
 # the shotgun fields this app needs in order to work properly
 requires_shotgun_fields:
 
 # user facing metadata
-display_name: "Houdini Startup App"
-description: "An app that handles extra business logic at the startup of Houdini."
+display_name: "ShotGrid Startup App"
+description: "An app that handles extra business logic at the startup of an engine."
 
 # url for the documentation of this app
 documentation_url: "https://wiki.vfxim.nl/"
