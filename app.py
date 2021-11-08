@@ -35,4 +35,4 @@ class TkMultiStartup(sgtk.platform.Application):
                 "A hook has not been found for this engine. Create one and configure it. %s"
                 % str(e)
             )
-            self.logger.error(msg)
+            self.logger.debug(msg)

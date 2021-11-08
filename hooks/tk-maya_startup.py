@@ -105,28 +105,43 @@ class Startup(HookBaseClass):
 
         return frame_range
 
-    @staticmethod
-    def _other_settings():
+    def _other_settings(self):
         """This function is for all the extra commands that have to be executed on startup."""
 
         # Disable highlighting new in release
-        mel.eval("whatsNewHighlight -highlightOn false;")
+        self._eval_mel("whatsNewHighlight -highlightOn false;")
 
         # Disable version warning
-        mel.eval("optionVar -intValue fileIgnoreVersion true;")
+        self._eval_mel("optionVar -intValue fileIgnoreVersion true;")
 
         # Set near and far clip for new created cameras
-        mel.eval('optionVar -fv "defaultCameraNearClipValue" 10;')
-        mel.eval('optionVar -fv "defaultCameraFarClipValue" 1000000;')
+        self._eval_mel('optionVar -fv "defaultCameraNearClipValue" 10;')
+        self._eval_mel('optionVar -fv "defaultCameraFarClipValue" 1000000;')
 
         # Keep keyframes at frame
-        mel.eval("optionVar -intValue keepKeysAtCurrentFrame 1;")
+        self._eval_mel("optionVar -intValue keepKeysAtCurrentFrame 1;")
+
+        # Force undo to be turned on
+        self._eval_mel("undoInfo -state on;")
 
         # Set undo limit to infinite
-        mel.eval("undoInfo -infinity on; intFieldGrp -e -enable false queueSizeIFG;")
+        self._eval_mel("undoInfo -infinity on;")
 
         # Play all viewers
-        mel.eval('playbackOptions -v "all";')
+        self._eval_mel('playbackOptions -v "all";')
 
         # Set Dolly tool to zoom based on location of mouse
-        mel.eval("dollyCtx -e -dollyTowardsCenter false dollyContext;")
+        self._eval_mel("dollyCtx -e -dollyTowardsCenter false dollyContext;")
+
+    def _eval_mel(self, command):
+        if command:
+            try:
+                mel.eval(command)
+
+            except Exception as e:
+                self.logger.debug(
+                    "Mel command (%s) dit not work work because: %s."
+                    % (command, str(e))
+                )
+        else:
+            self.logger.debug("No command specified.")
