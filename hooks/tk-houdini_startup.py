@@ -87,7 +87,18 @@ class Startup(HookBaseClass):
 
         # get fps setting
         try:
-            fps = app.get_setting("fps_default")
+            current_engine = self.parent.engine
+            sg = current_engine.shotgun
+            current_context = current_engine.context
+            project_name = current_context.project["name"]
+
+            fps = sg.find_one(
+                "Project", [["name", "is", project_name]], ["sg_fps"]
+            ).get("sg_fps")
+
+            if fps is None:
+                fps = app.get_setting("fps_default")
+
             return fps
 
         except Exception as e:
