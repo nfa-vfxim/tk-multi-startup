@@ -22,6 +22,7 @@
 
 import sgtk
 import hou
+import os
 
 HookBaseClass = sgtk.get_hook_baseclass()
 
@@ -29,16 +30,58 @@ HookBaseClass = sgtk.get_hook_baseclass()
 class Startup(HookBaseClass):
     def startup(self):
         """This method will be called at the start of a new Houdini session."""
+        self.current_engine = self.parent.engine
+        self.sg = self.current_engine.shotgun
+        self.current_context = self.current_engine.context
+        self.entity = self.current_context.entity
+
+        # Get data from ShotGrid
+        entity_id = self.entity["id"]
+        entity_type = self.entity["type"]
+
+        filters = [["id", "is", entity_id]]
+
+        columns = ["sg_cut_in", "sg_cut_out", "code"]
+
+        self.entity_data = self.sg.find_one(entity_type, filters, columns)
 
         # Setting FPS
-        fps = self._get_default_fps
-        self._set_fps(fps)
+        fps = self.__get_default_fps
+        self.__set_fps(fps)
 
         # Setting Frame Range
-        frame_start = self._get_default_frame_range()[0]
-        frame_end = self._get_default_frame_range()[1]
+        frame_range = self.__get_frame_range()
+        frame_start = frame_range[0]
+        frame_end = frame_range[1]
 
         self._set_frame_range(frame_start, frame_end)
+
+        self.__set_environments()
+
+    def __set_environments(self):
+        """Set environments containing data
+        during current session.
+        """
+
+        entity_data = self.entity_data
+
+        try:
+            # Get provided data into variables
+            entity_type = entity_data.get("type")
+            entity_id = entity_data.get("id")
+            entity_code = entity_data.get("code")
+            start_frame = entity_data.get("sg_cut_in")
+            end_frame = entity_data.get("sg_cut_out")
+
+            # Set environments
+            os.environ["sg_type"] = entity_type
+            os.environ["sg_id"] = str(entity_id)
+            os.environ["sg_code"] = str(entity_code)
+            os.environ["sg_fstart"] = str(start_frame)
+            os.environ["sg_fend"] = str(end_frame)
+
+        except Exception as error:
+            self.logger.error("Something went wrong %s..." % str(error))
 
     # private methods
     def _set_frame_range(self, frame_range_start, frame_range_end):
@@ -53,33 +96,42 @@ class Startup(HookBaseClass):
         # set the timeline to the first frame
         hou.setFrame(frame_range_start)
 
-    def _get_default_frame_range(self):
+    def __get_frame_range(self):
         """Get the configured frame range integers."""
 
         # get an instance of the app itself
         app = self.parent
 
-        # create an empty array to fill with frame range defaults
+        # create an empty list to fill with frame range defaults
         frame_range = []
 
-        # populate frame_range with settings
-        try:
-            frame_range.append(app.get_setting("frame_range_default_start"))
-            frame_range.append(app.get_setting("frame_range_default_end"))
-        except Exception as e:
-            self.logger.error(
-                "An error occurred while getting the default configured frame range. Make sure the configuration for "
-                "tk-houdini-startup is correct. %s" % str(e)
-            )
+        frame_start = self.entity_data["sg_cut_in"]
+        frame_end = self.entity_data["sg_cut_out"]
+
+        if frame_start is None:
+            try:
+                frame_range.append(
+                    app.get_setting("frame_range_default_start")
+                )
+                frame_range.append(app.get_setting("frame_range_default_end"))
+            except Exception as e:
+                self.logger.error(
+                    "An error occurred while getting the default configured frame range. Make sure the configuration for "
+                    "tk-houdini-startup is correct. %s" % str(e)
+                )
+
+        else:
+            frame_range.append(frame_start)
+            frame_range.append(frame_end)
 
         return frame_range
 
     @staticmethod
-    def _set_fps(fps):
+    def __set_fps(fps):
         hou.setFps(fps)
 
     @property
-    def _get_default_fps(self):
+    def __get_default_fps(self):
         """Get the configured fps integer."""
 
         # get an instance of the app itself
@@ -87,12 +139,9 @@ class Startup(HookBaseClass):
 
         # get fps setting
         try:
-            current_engine = self.parent.engine
-            sg = current_engine.shotgun
-            current_context = current_engine.context
-            project_name = current_context.project["name"]
+            project_name = self.current_context.project["name"]
 
-            fps = sg.find_one(
+            fps = self.sg.find_one(
                 "Project", [["name", "is", project_name]], ["sg_fps"]
             ).get("sg_fps")
 
