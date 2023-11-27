@@ -55,7 +55,7 @@ class Helper(HookBaseClass):
         """
         hou.setFps(fps)
 
-    def other_settings(self, env):
+    def additional_startup_settings(self, env):
         """
         This function is for all the extra commands that have to be executed on startup.
         """

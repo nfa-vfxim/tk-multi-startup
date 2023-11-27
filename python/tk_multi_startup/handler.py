@@ -75,7 +75,7 @@ class Handler:
         # Run engine specific functions
         self.app.execute_hook_method(
             key="helper_hook",
-            method_name="other_settings",
+            method_name="additional_startup_settings",
             env=self.env,
         )
 
