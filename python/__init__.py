@@ -20,12 +20,4 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import sgtk
-
-
-class TkMultiStartup(sgtk.platform.Application):
-    def init_app(self):
-        """Initialise the app."""
-        startup = self.import_module("tk_multi_startup")
-
-        startup.Handler(self)
+from . import tk_multi_startup

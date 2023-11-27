@@ -1,6 +1,6 @@
 # MIT License
 
-# Copyright (c) 2022 Netherlands Film Academy
+# Copyright (c) 2023 Netherlands Film Academy
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -34,14 +34,23 @@ configuration:
     type: int
     description: Default fps to use when opening engines.
     default_value: 25
-  execute_at_startup_hook:
+  helper_hook:
     type: hook
-    description: A hook that will be called at the start of a session.
-    default_value: "{self}/{engine_name}_startup.py"  
-  execute_at_context_change_hook:
-    type: hook
-    description: A hook that will be called after a change of context.
-    default_value: "{self}/{engine_name}_context.py"
+    description: Implements helper functions.
+    default_value: "{self}/{engine_name}_helper.py"
+  work_file_template:
+    type: template
+    description: A template for the work file path
+    fields: context, version, [name]
+    allows_empty: True
+  asset_root_template:
+    type: template
+    description: A template for the asset root directory
+    allows_empty: True
+  shot_root_template:
+    type: template
+    description: A template for the shot root directory
+    allows_empty: True
 
 # engines this app supports
 supported_engines: ['tk-houdini', 'tk-maya']
