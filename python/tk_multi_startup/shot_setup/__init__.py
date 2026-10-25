@@ -20,7 +20,7 @@ import traceback
 
 from . import scene, sg_data
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __author__ = "Luuk Kamphuis"
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -70,6 +70,10 @@ def should_auto_setup():
     engine = _engine()
     entity = engine.context.entity if engine else None
     if not entity or entity.get("type") != "Shot":
+        return False
+    # Only a brand-new, unsaved scene: an existing work file is never touched,
+    # even when it happens to be empty.
+    if cmds.file(query=True, sceneName=True):
         return False
     return not scene.was_set_up() and scene.is_empty_scene()
 

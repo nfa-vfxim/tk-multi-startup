@@ -1,5 +1,9 @@
 # NFA Shot Setup — Changelog
 
+## [1.0.1] — 2026-10-25 (Luuk)
+- The automatic setup only runs on a new, unsaved scene. Opening an existing work file (also an empty one)
+  no longer creates a camera.
+
 ## [1.0.0] — 2026-10-25 (Luuk)
 - First version, built into `tk-multi-startup` 0.3.0 (Maya, shot tasks).
 - **Automatic setup** the first time a shot is opened through ShotGrid (an empty scene in a Shot context):
