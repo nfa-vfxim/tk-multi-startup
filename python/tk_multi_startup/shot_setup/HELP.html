@@ -43,7 +43,8 @@
     <tr><td>Scene</td><td>Render resolution and pixel aspect of the plate, and the shot's frame range.</td></tr>
   </table>
   <p>It happens once per scene; a small message at the top of the viewport tells you it ran.
-  <kbd>Ctrl</kbd>+<kbd>Z</kbd> takes it all back in one step. Opening an existing work file never changes it.</p>
+  <kbd>Ctrl</kbd>+<kbd>Z</kbd> takes it all back in one step. Opening an existing work file never changes it by itself. Only when that file is still
+  completely empty, Shot Setup asks once whether you want the camera and plate; it doesn't ask again for that file.</p>
 
   <h2>Shot Setup window</h2>
   <p><b>ShotGrid &gt; Shot Setup...</b> shows what ShotGrid and the project folder say about the shot, next to
@@ -83,7 +84,7 @@
   <p>For a whole config: <code>shot_setup_auto: false</code> under <code>tk-multi-startup</code>. On one machine:
   environment variable <code>NFA_SHOT_SETUP_AUTO=0</code>. The menu item keeps working.</p>
 
-  <footer>NFA Shot Setup v1.0.1 · Luuk Kamphuis</footer>
+  <footer>NFA Shot Setup v1.1.0 · Luuk Kamphuis</footer>
 </main>
 </body>
 </html>

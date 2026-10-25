@@ -1,5 +1,9 @@
 # NFA Shot Setup — Changelog
 
+## [1.1.0] — 2026-10-25 (Luuk)
+- An existing work file that is still empty (and was never set up) asks once: *Create camera + plate* or
+  *Not now*. The answer is remembered per file on this computer, so it never asks twice.
+
 ## [1.0.1] — 2026-10-25 (Luuk)
 - The automatic setup only runs on a new, unsaved scene. Opening an existing work file (also an empty one)
   no longer creates a camera.
