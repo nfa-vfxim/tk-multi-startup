@@ -32,7 +32,11 @@ class TkMultiStartup(sgtk.platform.Application):
         self._shot_setup = None
         self._new_scene_job = None
 
-        startup.Handler(self)
+        try:
+            startup.Handler(self)
+        except Exception:
+            # Never let the startup settings block the rest of the app
+            self.logger.exception("tk-multi-startup: startup settings failed")
 
         if self.engine.name == "tk-maya":
             # Imported only in Maya: it needs maya.cmds

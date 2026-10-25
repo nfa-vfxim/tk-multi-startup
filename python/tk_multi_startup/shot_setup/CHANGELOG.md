@@ -1,5 +1,11 @@
 # NFA Shot Setup — Changelog
 
+## tk-multi-startup 3.0.1 — 2026-10-25 (Luuk)
+- Fix: the app failed to load on a new, unsaved scene ("Tried to extract fields from path '.'"), so Shot
+  Setup never ran. The work-file fields are now skipped when there is no saved work file, and a failing
+  startup setting no longer stops the app.
+- Released as 3.0.0/3.0.1 (the 0.3.0 mentioned below is the same code).
+
 ## [1.1.0] — 2026-10-25 (Luuk)
 - An existing work file that is still empty (and was never set up) asks once: *Create camera + plate* or
   *Not now*. The answer is remembered per file on this computer, so it never asks twice.

@@ -150,10 +150,15 @@ class Handler:
                     key="helper_hook",
                     method_name="get_file_path",
                 )
-                fields = work_template.get_fields(file)
-                env["SG_NAME"] = fields.get("name")
-                env["SG_VERSION"] = str(fields.get("version"))
-                env["SG_VERSION_S"] = f"v{fields.get('version'):03}"
+                # A new, unsaved scene (or a file outside the template) has no
+                # name/version yet; that must not stop the app from loading.
+                fields = {}
+                if file and work_template.validate(file):
+                    fields = work_template.get_fields(file)
+                if fields.get("version") is not None:
+                    env["SG_NAME"] = fields.get("name") or "-"
+                    env["SG_VERSION"] = str(fields.get("version"))
+                    env["SG_VERSION_S"] = f"v{fields.get('version'):03}"
 
         self.env = env
         for key, value in env.items():
