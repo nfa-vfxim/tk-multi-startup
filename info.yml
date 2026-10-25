@@ -51,6 +51,14 @@ configuration:
     type: template
     description: A template for the shot root directory
     allows_empty: True
+  shot_setup_menu_name:
+    type: str
+    description: "Maya only: name of the Shot Setup menu item in shot tasks (an ellipsis is added). Empty hides it."
+    default_value: "Shot Setup"
+  shot_setup_auto:
+    type: bool
+    description: "Maya only: set up an empty shot scene automatically (shot camera with the ShotGrid focal length and filmback, plate on an image plane, resolution). NFA_SHOT_SETUP_AUTO=0 turns it off per machine."
+    default_value: true
 
 # engines this app supports
 supported_engines: ['tk-houdini', 'tk-maya']

@@ -55,3 +55,13 @@ tk-multi-startup is a Shotgun Toolkit app that allows you to add some logic to t
   - `SG_SHOT`: Shot name, if different context: `-`
   - `SG_SHOT_ROOT`: Shot file root, if different context: `-`
   - `SG_SHOT_RENDER_ROOT`: Shot file root on render server, if different context: `-`
+## NFA Shot Setup (Maya)
+In Maya shot tasks this app also sets up an empty shot scene the first time it opens: a shot camera with
+`Shot.sg_focal_length` and the filmback of `Shot.sg_camera` (`Camera.sg_filmback_width/height`, mm; empty →
+35 mm / 36 × 24 mm), the plate on an image plane and the plate's resolution. **ShotGrid > Shot Setup...**
+checks and updates it later. Code, help and changelog: `python/tk_multi_startup/shot_setup/`.
+
+- `shot_setup_menu_name`
+    - type: `str`, default `Shot Setup` (empty hides the menu item)
+- `shot_setup_auto`
+    - type: `bool`, default `true`. `NFA_SHOT_SETUP_AUTO=0` turns it off on one machine.

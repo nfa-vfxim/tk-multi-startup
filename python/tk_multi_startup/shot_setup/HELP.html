@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NFA Shot Setup · Help</title>
+<style>
+  :root { --bg:#1b1c1f; --panel:#2f3237; --card:#25272b; --border:#34373d; --text:#e6e7ea; --dim:#8b8f98;
+          --accent:#3b82f6; --green:#4ade80; --amber:#fbbf24; --red:#f87171; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.6 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 40px 20px 60px; }
+  h1 { font-size: 26px; margin: 0; }
+  .sub { color: var(--dim); font-size: 12px; letter-spacing: 2px; margin-bottom: 28px; }
+  h2 { font-size: 17px; margin: 34px 0 10px; color: var(--accent); }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 10px 0; }
+  code, kbd { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  td:first-child { white-space: nowrap; width: 1%; }
+  .pill { display:inline-block; border-radius: 4px; padding: 0 7px; color: #111; font-size: 12px; font-weight: 600; }
+  .g { background: var(--green); } .a { background: var(--amber); } .r { background: var(--red); }
+  ol li, ul li { margin: 4px 0; }
+  footer { color: var(--dim); font-size: 12px; margin-top: 40px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Shot Setup</h1>
+  <div class="sub">MAYA · VFXIM PIPELINE</div>
+
+  <p>Shot Setup gets a shot ready the first time you open it: a shot camera with the right lens, the plate
+  on an image plane, and the right resolution and frame range. You don't have to do anything for it.</p>
+
+  <h2>What happens automatically</h2>
+  <p>When you open a shot through <b>ShotGrid &gt; File Open</b> and the scene is still empty
+  (a new file), Shot Setup creates:</p>
+  <table>
+    <tr><td><code>shotCam_&lt;seq&gt;_&lt;shot&gt;</code></td><td>The shot camera. Focal length from the shot on
+      ShotGrid, filmback (sensor size) from the camera linked to the shot. You look through it straight away.</td></tr>
+    <tr><td><code>plate_&lt;seq&gt;_&lt;shot&gt;</code></td><td>An image plane on that camera with the plate:
+      the newest plate version, EXR first. Frame 1001 in Maya shows plate frame 1001.</td></tr>
+    <tr><td>Scene</td><td>Render resolution and pixel aspect of the plate, and the shot's frame range.</td></tr>
+  </table>
+  <p>It happens once per scene; a small message at the top of the viewport tells you it ran.
+  <kbd>Ctrl</kbd>+<kbd>Z</kbd> takes it all back in one step. Opening an existing work file never changes it.</p>
+
+  <h2>Shot Setup window</h2>
+  <p><b>ShotGrid &gt; Shot Setup...</b> shows what ShotGrid and the project folder say about the shot, next to
+  what's in your scene:</p>
+  <table>
+    <tr><td><span class="pill g">OK</span></td><td>The scene matches.</td></tr>
+    <tr><td><span class="pill a">UPDATE</span></td><td>Something changed, e.g. a new focal length on ShotGrid
+      or a newer plate version. Press the Update button of that block.</td></tr>
+    <tr><td><span class="pill r">MISSING</span></td><td>Not in the scene yet (for example an older scene).
+      <b>Set up shot</b> adds it.</td></tr>
+  </table>
+  <p>Updates only change the lens (focal length, filmback) and the image plane's file and frame offset.
+  Your camera animation and the image plane's depth, transparency and placement stay as they are.
+  Pick another plate version in the <b>Plate</b> list if you need an older or a different one.</p>
+
+  <h2>Where the information comes from</h2>
+  <div class="card">
+    <b>Focal length</b> – the shot's <i>Focal Length</i> field on ShotGrid (mm). Empty: 35 mm.<br>
+    <b>Filmback</b> – the shot's <i>Camera</i> on ShotGrid, fields <i>Filmback Width</i> and
+    <i>Filmback Height</i> (mm). No camera linked: 36 × 24 mm (Maya's default).<br>
+    <b>Plate</b> – first the footage folder chosen in Shot Manager, then
+    <code>02_source/sc&lt;seq&gt;/&lt;shot&gt;/p###/plates/</code>, then plates published to the shot on ShotGrid.<br>
+    <b>Frame range</b> – the shot's <i>Cut In</i> / <i>Cut Out</i>, otherwise the plate's frames.
+  </div>
+
+  <h2>For production: setting up a camera on ShotGrid</h2>
+  <ol>
+    <li>In the project, open the <b>Cameras</b> page (not in the navigation? <i>Project Actions &gt; Tracking
+      Settings</i>, set <i>Camera</i> to visible).</li>
+    <li><b>+ Camera</b>: a name (e.g. <i>Sony Venice 6K 3:2</i>) and Filmback Width / Height in mm.</li>
+    <li>On the <b>Shots</b> page, add the <b>Camera</b> and <b>Focal Length</b> columns and fill them in.
+      Select several shots to fill them in at once.</li>
+  </ol>
+  <p>Then press <b>Reload</b> and <b>Update camera</b> in the Shot Setup window of scenes that already exist.</p>
+
+  <h2>Turning the automatic part off</h2>
+  <p>For a whole config: <code>shot_setup_auto: false</code> under <code>tk-multi-startup</code>. On one machine:
+  environment variable <code>NFA_SHOT_SETUP_AUTO=0</code>. The menu item keeps working.</p>
+
+  <footer>NFA Shot Setup v1.0.0 · Luuk Kamphuis</footer>
+</main>
+</body>
+</html>
