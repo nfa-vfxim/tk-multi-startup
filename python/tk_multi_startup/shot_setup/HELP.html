@@ -46,6 +46,11 @@
   <kbd>Ctrl</kbd>+<kbd>Z</kbd> takes it all back in one step. Opening an existing work file never changes it by itself. Only when that file is still
   completely empty, Shot Setup asks once whether you want the camera and plate; it doesn't ask again for that file.</p>
 
+  <h2>Scenes that already have content</h2>
+  <p>The automatic setup only runs on a new scene. For a scene that already has things in it, choose
+  <b>ShotGrid &gt; Create Shot Camera + Plate</b>: it adds the shot camera and the plate in one click
+  (<kbd>Ctrl</kbd>+<kbd>Z</kbd> undoes it). If the shot camera is already there it asks whether to update it.</p>
+
   <h2>Shot Setup window</h2>
   <p><b>ShotGrid &gt; Shot Setup...</b> shows what ShotGrid and the project folder say about the shot, next to
   what's in your scene:</p>
@@ -91,7 +96,7 @@
   <p>For a whole config: <code>shot_setup_auto: false</code> under <code>tk-multi-startup</code>. On one machine:
   environment variable <code>NFA_SHOT_SETUP_AUTO=0</code>. The menu item keeps working.</p>
 
-  <footer>NFA Shot Setup v1.3.0 · Luuk Kamphuis</footer>
+  <footer>NFA Shot Setup v1.4.0 · Luuk Kamphuis</footer>
 </main>
 </body>
 </html>

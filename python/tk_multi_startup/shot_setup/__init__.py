@@ -20,7 +20,7 @@ import traceback
 
 from . import scene, sg_data
 
-__version__ = "1.3.1"
+__version__ = "1.4.0"
 __author__ = "Luuk Kamphuis"
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -178,6 +178,62 @@ def _toast(text):
         cmds.inViewMessage(assistMessage=text, position="topCenter", fade=True, fadeStayTime=3500)
     except Exception:
         pass
+
+
+# --------------------------------------------------------------------------- menu: create now
+def create_now():
+    """
+    ShotGrid > Create Shot Camera + Plate: the same setup as the automatic one,
+    for scenes that already have content. Asks first when it would touch
+    something that is already there.
+    """
+    from . import dialog
+    import maya.cmds as cmds
+    try:
+        src = current_source()
+    except sg_data.NotAvailable as e:
+        dialog.message("NFA Shot Setup", str(e), error=True)
+        return None
+
+    st = scene.state()
+    if st["matchmove"]:
+        if not _confirm("A matchmove camera from the 3D Camera Track USD Import is already in this scene, "
+                        "and that track is leading.\n\nAdd the Shot Setup camera and plate anyway?",
+                        "Add anyway"):
+            return None
+    elif st["camera"]:
+        if not _confirm("This scene already has the shot camera (%s).\n\nUpdate its lens, the plate and the "
+                        "scene settings from ShotGrid? Camera animation is kept." % st["camera"].split("|")[-1],
+                        "Update"):
+            return None
+
+    try:
+        data = sg_data.load(src)
+        done = scene.build(data, __version__)
+    except Exception as e:
+        _log("Create Shot Camera + Plate failed:\n%s" % traceback.format_exc(), warning=True)
+        dialog.message("NFA Shot Setup", "Something went wrong:\n\n%s" % e, error=True)
+        return None
+    if not st["camera"]:
+        scene.look_through()
+    _log("Set up shot %s: %s" % (data.shot_code, ", ".join(done)))
+    _toast("Shot Setup: camera %.4g mm%s  ·  Ctrl+Z undoes it" % (
+        data.focal, (" + plate " + (data.plate.version or "")) if data.plate else " (no plate found)"))
+    cmds.refresh()
+    return done
+
+
+def _confirm(text, ok_label):
+    from . import dialog
+    box = dialog.QtWidgets.QMessageBox(dialog.maya_main_window())
+    box.setWindowTitle("NFA Shot Setup")
+    box.setIcon(dialog.QtWidgets.QMessageBox.Question)
+    box.setText(text)
+    ok = box.addButton(ok_label, dialog.QtWidgets.QMessageBox.AcceptRole)
+    box.addButton("Cancel", dialog.QtWidgets.QMessageBox.RejectRole)
+    box.setDefaultButton(ok)
+    dialog._exec(box)
+    return box.clickedButton() is ok
 
 
 # --------------------------------------------------------------------------- window

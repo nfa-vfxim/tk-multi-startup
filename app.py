@@ -59,6 +59,16 @@ class TkMultiStartup(sgtk.platform.Application):
                         os.path.dirname(shot_setup.__file__), "icon_256.png")}},
                 },
             )
+            self.engine.register_command(
+                "Create Shot Camera + Plate",
+                shot_setup.create_now,
+                {
+                    "short_name": "shot_setup_create",
+                    "description": "Add the shot camera and the plate to this scene, also when it isn't empty",
+                    "icons": {"dark": {"png": os.path.join(
+                        os.path.dirname(shot_setup.__file__), "icon_256.png")}},
+                },
+            )
         if not self.get_setting("shot_setup_auto"):
             return
         # Engine start or a new environment: check once Maya is idle

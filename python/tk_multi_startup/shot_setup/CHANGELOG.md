@@ -1,5 +1,10 @@
 # NFA Shot Setup — Changelog
 
+## tk-multi-startup 3.0.5 — 2026-10-26 (Luuk)
+- New menu item **ShotGrid > Create Shot Camera + Plate**: one click adds the shot camera and the plate to
+  any shot scene, also one that already has content. Asks first when the shot camera is already there
+  (then it updates it, animation kept) or when a matchmove camera is leading. One undo step.
+
 ## tk-multi-startup 3.0.4 — 2026-10-26 (Luuk)
 - The plate image plane gets colour space **ACES2065-1** (EXR plates; *Ignore Color Space File Rules* on)
   instead of *default*. Update image plane sets it on existing scenes too.
