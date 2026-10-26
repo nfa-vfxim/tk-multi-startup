@@ -114,7 +114,7 @@ def state():
     """What is in the scene now (for the dialog)."""
     t, s = camera()
     ip = image_plane()
-    out = {"marker": was_set_up(), "camera": t, "focal": None, "filmback": None,
+    out = {"marker": was_set_up(), "matchmove": matchmove_cameras(), "camera": t, "focal": None, "filmback": None,
            "image_plane": ip, "plate": None, "offset": None}
     if s:
         out["focal"] = round(cmds.getAttr(s + ".focalLength"), 3)
@@ -124,6 +124,57 @@ def state():
         out["plate"] = cmds.getAttr(ip + ".imageName") or ""
         out["offset"] = cmds.getAttr(ip + ".frameOffset")
     return out
+
+
+# --------------------------------------------------------------------------- matchmove
+def matchmove_cameras():
+    """
+    Cameras brought in by the 3D Camera Track USD Import tool (Lucas). Once one
+    is in the scene, that track is leading and Shot Setup stops changing things.
+    The importer loads /world/scene/camera/UndistortedCam/Camera from the USD.
+    """
+    ours = camera()[0]
+    ours = (cmds.ls(ours, long=True) or [None])[0] if ours else None
+    found = []
+    for shape in cmds.ls(type="camera", long=True) or []:
+        parent = (cmds.listRelatives(shape, parent=True, fullPath=True) or [None])[0]
+        if not parent or parent == ours:
+            continue
+        try:
+            if cmds.camera(parent, query=True, startupCamera=True):
+                continue
+        except RuntimeError:
+            continue
+        low = parent.lower()
+        if "undistortedcam" in low or (low.startswith("|world|") and "|camera" in low):
+            found.append(parent)
+    return found
+
+
+def remove_shot_camera():
+    """Delete Shot Setup's camera and image plane (one undo step). Returns True if something was removed."""
+    t, _s = camera()
+    ip = image_plane()
+    nodes = []
+    if ip:
+        ip_t = (cmds.listRelatives(ip, parent=True, fullPath=True) or [ip])[0]
+        nodes.append(ip_t)
+    if t:
+        nodes.append(t)
+    nodes = [n for n in nodes if cmds.objExists(n)]
+    if not nodes:
+        return False
+    cmds.undoInfo(openChunk=True, chunkName="NFA Shot Setup: remove shot camera")
+    try:
+        for n in nodes:
+            if cmds.objExists(n):
+                cmds.delete(n)
+        node = marker(create=True)
+        _add_attr(node, "handedOver", "string")
+        _set_str("handedOver", time.strftime("%Y-%m-%d %H:%M"))
+    finally:
+        cmds.undoInfo(closeChunk=True)
+    return True
 
 
 # --------------------------------------------------------------------------- build

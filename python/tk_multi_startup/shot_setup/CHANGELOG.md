@@ -1,5 +1,11 @@
 # NFA Shot Setup — Changelog
 
+## tk-multi-startup 3.0.3 — 2026-10-26 (Luuk)
+- Shot Setup is only for the first setup. Once a matchmove camera from the **3D Camera Track USD Import**
+  (Lucas) is in the scene, that track is leading: the window shows *Matchmove camera found*, all update
+  buttons are off (no more changes to camera, plate, resolution or frame range) and **Remove shot camera**
+  deletes `shotCam_…` and its plate so only the tracked camera is left (one undo step).
+
 ## tk-multi-startup 3.0.2 — 2026-10-26 (Luuk)
 - The filmback height now follows the plate's aspect (width from ShotGrid or 36 mm, height = width / plate
   aspect incl. pixel aspect), so the film gate and the resolution gate line up. A 16:9 plate on a 36 mm

@@ -60,6 +60,13 @@
   Your camera animation and the image plane's depth, transparency and placement stay as they are.
   Pick another plate version in the <b>Plate</b> list if you need an older or a different one.</p>
 
+  <h2>After the matchmove: the track is leading</h2>
+  <p>Shot Setup is only for the first setup of a shot. As soon as the tracked camera is imported with the
+  <b>3D Camera Track USD Import</b> tool, that camera, its plate, resolution and frame range are leading.
+  The Shot Setup window then shows <i>Matchmove camera found</i> and doesn't change anything anymore.
+  Press <b>Remove shot camera</b> to delete <code>shotCam_…</code> and its plate, so only the tracked
+  camera is left (<kbd>Ctrl</kbd>+<kbd>Z</kbd> brings it back).</p>
+
   <h2>Where the information comes from</h2>
   <div class="card">
     <b>Focal length</b> – the shot's <i>Focal Length</i> field on ShotGrid (mm). Empty: 35 mm.<br>
@@ -84,7 +91,7 @@
   <p>For a whole config: <code>shot_setup_auto: false</code> under <code>tk-multi-startup</code>. On one machine:
   environment variable <code>NFA_SHOT_SETUP_AUTO=0</code>. The menu item keeps working.</p>
 
-  <footer>NFA Shot Setup v1.2.0 · Luuk Kamphuis</footer>
+  <footer>NFA Shot Setup v1.3.0 · Luuk Kamphuis</footer>
 </main>
 </body>
 </html>

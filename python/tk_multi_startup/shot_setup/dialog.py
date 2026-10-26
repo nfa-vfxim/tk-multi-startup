@@ -136,6 +136,20 @@ class ShotSetupDialog(QtWidgets.QDialog):
             head.addWidget(b, 0, QtCore.Qt.AlignTop)
         root.addLayout(head)
 
+        # Matchmove banner: the tracked camera is leading
+        self.track_card = QtWidgets.QFrame()
+        self.track_card.setObjectName("Card")
+        self.track_card.setStyleSheet("QFrame#Card { border: 1px solid %s; }" % ACCENT)
+        tl = QtWidgets.QHBoxLayout(self.track_card)
+        tl.setContentsMargins(16, 10, 10, 10)
+        self.track_lbl = QtWidgets.QLabel("")
+        self.track_lbl.setWordWrap(True)
+        tl.addWidget(self.track_lbl, 1)
+        self.remove_btn = self._button("Remove shot camera", "SecondaryButton", self.remove_shot_camera)
+        tl.addWidget(self.remove_btn, 0, QtCore.Qt.AlignVCenter)
+        self.track_card.hide()
+        root.addWidget(self.track_card)
+
         # Camera
         self.cam_card, cam, head = self._card("Camera")
         self.cam_chip = self._chip_label()
@@ -342,6 +356,25 @@ class ShotSetupDialog(QtWidgets.QDialog):
         self._set_chip(self.scene_chip, OK if ok else UPDATE)
 
         self.all_btn.setText("Update shot" if st["marker"] else "Set up shot")
+
+        # Once the tracked camera is in, Shot Setup only shows; it changes nothing
+        tracked = bool(st["matchmove"])
+        self.track_card.setVisible(tracked)
+        for b in (self.cam_btn, self.plate_btn, self.scene_btn, self.all_btn):
+            b.setEnabled(not tracked and (b is not self.plate_btn or bool(plate)))
+        if tracked:
+            for chip in (self.cam_chip, self.plate_chip, self.scene_chip):
+                self._set_chip(chip, "NONE")
+                chip.setText("TRACK LEADS")
+            names = ", ".join(n.split("|")[-2] if n.count("|") > 1 else n for n in st["matchmove"])
+            has_ours = bool(st["camera"] or st["image_plane"])
+            self.track_lbl.setText(
+                "<b>Matchmove camera found</b> (%s). The 3D Camera Track USD Import is leading now: "
+                "Shot Setup won't change the camera, plate, resolution or frame range anymore.%s"
+                % (names, " Remove the shot camera so only the tracked camera is left." if has_ours else ""))
+            self.remove_btn.setVisible(has_ours)
+            self.status.setText("Shot Setup was only for the first setup of this shot.")
+            return
         if st["marker"]:
             self.status.setText("Set up before in this scene. Updates keep your camera animation and "
                                 "image plane placement.")
@@ -358,6 +391,24 @@ class ShotSetupDialog(QtWidgets.QDialog):
             return
         self._refresh_status()
         self.status.setText("Updated: %s. Ctrl+Z undoes it." % ", ".join(done))
+        cmds.refresh()
+
+    def remove_shot_camera(self):
+        import maya.cmds as cmds
+        t = scene.camera()[0]
+        name = t.split("|")[-1] if t else "the shot camera"
+        box = QtWidgets.QMessageBox(self)
+        box.setWindowTitle("NFA Shot Setup")
+        box.setIcon(QtWidgets.QMessageBox.Question)
+        box.setText("Remove %s and its plate image plane?\n\nThe tracked camera stays. Ctrl+Z brings it back." % name)
+        yes = box.addButton("Remove", QtWidgets.QMessageBox.AcceptRole)
+        box.addButton("Cancel", QtWidgets.QMessageBox.RejectRole)
+        _exec(box)
+        if box.clickedButton() is not yes:
+            return
+        scene.remove_shot_camera()
+        self._refresh_status()
+        self.status.setText("Removed %s. Ctrl+Z brings it back." % name)
         cmds.refresh()
 
     def update_camera(self):
