@@ -20,7 +20,7 @@ import traceback
 
 from . import scene, sg_data
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 __author__ = "Luuk Kamphuis"
 
 HERE = os.path.dirname(os.path.abspath(__file__))

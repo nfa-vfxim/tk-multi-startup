@@ -289,6 +289,20 @@ class ShotData(object):
         raw = "%s_%s" % (self.sequence, self.shot_code) if self.sequence else self.shot_code
         return re.sub(r"[^A-Za-z0-9_]", "_", raw)
 
+    def camera_filmback(self, plate=None):
+        """
+        Filmback for the Maya camera: the width from ShotGrid (or the default),
+        the height from the plate's aspect so the film gate matches the
+        resolution gate. Without a readable plate: the filmback as it is.
+        """
+        plate = plate or self.plate
+        size = plate.size() if plate else None
+        if not size or not size[1]:
+            return self.filmback
+        w, h, par = size
+        aspect = float(w) * (par or 1.0) / float(h)
+        return self.filmback[0], round(self.filmback[0] / aspect, 4)
+
     @property
     def frame_range(self):
         """(start, end) from ShotGrid, else from the plate, else None."""

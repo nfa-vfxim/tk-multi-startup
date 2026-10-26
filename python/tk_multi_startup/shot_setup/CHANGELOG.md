@@ -1,5 +1,10 @@
 # NFA Shot Setup — Changelog
 
+## tk-multi-startup 3.0.2 — 2026-10-26 (Luuk)
+- The filmback height now follows the plate's aspect (width from ShotGrid or 36 mm, height = width / plate
+  aspect incl. pixel aspect), so the film gate and the resolution gate line up. A 16:9 plate on a 36 mm
+  filmback gives 36 × 20.25 mm; the usual 2134 × 1422 pulls stay 36 × 24 mm.
+
 ## tk-multi-startup 3.0.1 — 2026-10-25 (Luuk)
 - Fix: the app failed to load on a new, unsaved scene ("Tried to extract fields from path '.'"), so Shot
   Setup never ran. The work-file fields are now skipped when there is no saved work file, and a failing

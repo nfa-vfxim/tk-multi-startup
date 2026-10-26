@@ -136,7 +136,7 @@ def _unique(name):
     return "%s%d" % (name, i)
 
 
-def ensure_camera(data):
+def ensure_camera(data, plate=None):
     """Create the shot camera, or update the lens of the existing one."""
     t, s = camera()
     if not s:
@@ -151,13 +151,14 @@ def ensure_camera(data):
         cmds.setAttr(s + ".overscan", 1.1)
         _link("camera", t)
     cmds.setAttr(s + ".focalLength", float(data.focal))
-    cmds.setAttr(s + ".horizontalFilmAperture", data.filmback[0] / MM_PER_INCH)
-    cmds.setAttr(s + ".verticalFilmAperture", data.filmback[1] / MM_PER_INCH)
+    fb = data.camera_filmback(plate)
+    cmds.setAttr(s + ".horizontalFilmAperture", fb[0] / MM_PER_INCH)
+    cmds.setAttr(s + ".verticalFilmAperture", fb[1] / MM_PER_INCH)
     cmds.setAttr(s + ".filmFit", 1)          # horizontal, like the plate
     node = marker(create=True)
     cmds.setAttr(node + ".focal", float(data.focal))
-    cmds.setAttr(node + ".filmbackWidth", float(data.filmback[0]))
-    cmds.setAttr(node + ".filmbackHeight", float(data.filmback[1]))
+    cmds.setAttr(node + ".filmbackWidth", float(fb[0]))
+    cmds.setAttr(node + ".filmbackHeight", float(fb[1]))
     return t
 
 
@@ -185,7 +186,7 @@ def ensure_image_plane(data, plate, start=None):
     """Put *plate* on the shot camera's image plane (creates it if needed)."""
     t, cam = camera()
     if not cam:
-        t = ensure_camera(data)
+        t = ensure_camera(data, plate)
         t, cam = camera()
     ip = image_plane()
     path = plate.first_file
@@ -272,7 +273,7 @@ def build(data, version, do_camera=True, do_plate=True, do_scene=True, plate=Non
             apply_scene_settings(data, plate)
             done.append("scene settings")
         if do_camera:
-            ensure_camera(data)
+            ensure_camera(data, plate)
             done.append("camera %.4g mm" % data.focal)
         if do_plate and plate:
             ensure_image_plane(data, plate)

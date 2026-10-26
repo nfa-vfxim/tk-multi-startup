@@ -63,8 +63,8 @@
   <h2>Where the information comes from</h2>
   <div class="card">
     <b>Focal length</b> – the shot's <i>Focal Length</i> field on ShotGrid (mm). Empty: 35 mm.<br>
-    <b>Filmback</b> – the shot's <i>Camera</i> on ShotGrid, fields <i>Filmback Width</i> and
-    <i>Filmback Height</i> (mm). No camera linked: 36 × 24 mm (Maya's default).<br>
+    <b>Filmback</b> – the width from the shot's <i>Camera</i> on ShotGrid (<i>Filmback Width</i>, mm; no camera
+    linked: 36 mm). The height follows the plate's aspect, so the film gate matches the plate.<br>
     <b>Plate</b> – first the footage folder chosen in Shot Manager, then
     <code>02_source/sc&lt;seq&gt;/&lt;shot&gt;/p###/plates/</code>, then plates published to the shot on ShotGrid.<br>
     <b>Frame range</b> – the shot's <i>Cut In</i> / <i>Cut Out</i>, otherwise the plate's frames.
@@ -84,7 +84,7 @@
   <p>For a whole config: <code>shot_setup_auto: false</code> under <code>tk-multi-startup</code>. On one machine:
   environment variable <code>NFA_SHOT_SETUP_AUTO=0</code>. The menu item keeps working.</p>
 
-  <footer>NFA Shot Setup v1.1.0 · Luuk Kamphuis</footer>
+  <footer>NFA Shot Setup v1.2.0 · Luuk Kamphuis</footer>
 </main>
 </body>
 </html>

@@ -75,6 +75,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(d.plate.size()[:2], (3840, 2160))
         self.assertEqual(d.frame_range, (1001, 1020))
         self.assertEqual(d.node_suffix, "998_0010")
+        self.assertEqual(d.camera_filmback(), (36.0, 20.25))
 
     def test_shotgrid_values_and_shot_manager_folder(self):
         chosen = os.path.join(self.root, "elsewhere", "plates")

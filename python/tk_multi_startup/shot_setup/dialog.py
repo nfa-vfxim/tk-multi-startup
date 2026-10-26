@@ -259,14 +259,6 @@ class ShotSetupDialog(QtWidgets.QDialog):
         self.subtitle.setText("%s  ·  shot %s" % (("Sequence " + d.sequence) if d.sequence else "", d.shot_code))
 
         self.focal_lbl.setText("%s mm  %s" % (_mm(d.focal), "(ShotGrid)" if d.focal_from_sg else "(default)"))
-        fb = "%s × %s mm" % (_mm(d.filmback[0]), _mm(d.filmback[1]))
-        if d.filmback_from_sg:
-            fb += "  (camera: %s)" % (d.camera_name or "ShotGrid")
-        elif d.camera_name:
-            fb += "  (default, camera %s has no filmback)" % d.camera_name
-        else:
-            fb += "  (default)"
-        self.filmback_lbl.setText(fb)
 
         self.plate_combo.blockSignals(True)
         self.plate_combo.clear()
@@ -286,6 +278,18 @@ class ShotSetupDialog(QtWidgets.QDialog):
         if d is None:
             return
         st = scene.state()
+        want = d.camera_filmback(self.selected_plate())
+
+        # Filmback: width from ShotGrid (or default), height from the plate aspect
+        fb_txt = "%s × %s mm" % (_mm(want[0]), _mm(want[1]))
+        if d.filmback_from_sg:
+            fb_txt += "  (width from camera %s" % (d.camera_name or "on ShotGrid")
+        elif d.camera_name:
+            fb_txt += "  (default width, camera %s has no filmback" % d.camera_name
+        else:
+            fb_txt += "  (default width"
+        fb_txt += ", height from the plate)" if not _same(want[1], d.filmback[1]) else ")"
+        self.filmback_lbl.setText(fb_txt)
 
         # Camera
         if not st["camera"]:
@@ -295,7 +299,7 @@ class ShotSetupDialog(QtWidgets.QDialog):
             fb = st["filmback"] or (0, 0)
             self.cam_scene_lbl.setText("%s  ·  %s mm  ·  %s × %s mm" % (
                 st["camera"].split("|")[-1], _mm(st["focal"]), _mm(fb[0]), _mm(fb[1])))
-            ok = (_same(st["focal"], d.focal) and _same(fb[0], d.filmback[0]) and _same(fb[1], d.filmback[1]))
+            ok = (_same(st["focal"], d.focal) and _same(fb[0], want[0]) and _same(fb[1], want[1]))
             self._set_chip(self.cam_chip, OK if ok else UPDATE,
                            "" if ok else "The camera's lens differs from ShotGrid")
 
