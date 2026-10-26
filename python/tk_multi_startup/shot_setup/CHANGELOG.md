@@ -1,5 +1,9 @@
 # NFA Shot Setup — Changelog
 
+## tk-multi-startup 3.0.4 — 2026-10-26 (Luuk)
+- The plate image plane gets colour space **ACES2065-1** (EXR plates; *Ignore Color Space File Rules* on)
+  instead of *default*. Update image plane sets it on existing scenes too.
+
 ## tk-multi-startup 3.0.3 — 2026-10-26 (Luuk)
 - Shot Setup is only for the first setup. Once a matchmove camera from the **3D Camera Track USD Import**
   (Lucas) is in the scene, that track is leading: the window shows *Matchmove camera found*, all update

@@ -19,6 +19,7 @@ MM_PER_INCH = 25.4
 DEFAULT_CAMERAS = {"persp", "top", "front", "side", "bottom", "back", "left"}
 NEAR_CLIP = 10.0          # same as tk-multi-startup's default for new cameras
 FAR_CLIP = 1000000.0
+PLATE_COLORSPACE = "ACES2065-1"   # EXR plates in the ACES 2 pipeline
 
 
 # --------------------------------------------------------------------------- marker
@@ -233,6 +234,19 @@ def _frame_expression(ip):
                     unitConversion="all", name=_unique("%s_frameExt" % ip.split("|")[-1]))
 
 
+def _set_plate_colorspace(ip, path):
+    """EXR plates are ACES2065-1; other formats keep Maya's file rules."""
+    if not path.lower().endswith(".exr"):
+        return
+    try:
+        names = cmds.colorManagementPrefs(query=True, inputSpaceNames=True) or []
+        if PLATE_COLORSPACE in names:
+            cmds.setAttr(ip + ".ignoreColorSpaceFileRules", 1)
+            cmds.setAttr(ip + ".colorSpace", PLATE_COLORSPACE, type="string")
+    except Exception:
+        pass
+
+
 def ensure_image_plane(data, plate, start=None):
     """Put *plate* on the shot camera's image plane (creates it if needed)."""
     t, cam = camera()
@@ -251,6 +265,7 @@ def ensure_image_plane(data, plate, start=None):
         cmds.setAttr(ip + ".displayOnlyIfCurrent", 1)
     else:
         cmds.setAttr(ip + ".imageName", path, type="string")
+    _set_plate_colorspace(ip, path)
     cmds.setAttr(ip + ".useFrameExtension", 1)
     _frame_expression(ip)
     if start is None and data.frame_range:
