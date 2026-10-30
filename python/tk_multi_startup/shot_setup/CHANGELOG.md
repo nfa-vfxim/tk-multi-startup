@@ -1,5 +1,11 @@
 # NFA Shot Setup — Changelog
 
+## tk-multi-startup 3.0.7 — 2026-10-30 (Luuk)
+- An empty shot scene now always **asks once** (*Create camera + plate* / *Not now*), also a new, unsaved
+  scene; nothing is created without asking anymore. *Not now* is remembered for that shot task (per
+  computer): opening the shot again, also in a new scene, doesn't ask again. Create Shot Camera + Plate
+  still works any time.
+
 ## tk-multi-startup 3.0.6 — 2026-10-30 (Luuk)
 - Camera and plate are only created in a **layout** task: the automatic setup, the ask-once question and
   *Create Shot Camera + Plate* do nothing in animation, lighting etc. (the menu item says why). The Shot

@@ -35,9 +35,10 @@
   <p><b>Only in the layout task.</b> In animation, lighting and other tasks Shot Setup doesn't create
   anything; the Shot Setup window is view-only there.</p>
 
-  <h2>What happens automatically</h2>
-  <p>When you open a shot through <b>ShotGrid &gt; File Open</b> and it's a new, unsaved scene
-  (File Open &gt; + New File), Shot Setup creates:</p>
+  <h2>The first time you open a shot</h2>
+  <p>When you open a shot through <b>ShotGrid &gt; File Open</b> and the scene is still empty, Shot Setup asks
+  once: <b>Create camera + plate</b> or <b>Not now</b>. Choose <i>Not now</i> and it won't ask again for that
+  shot, not even when you open it again later. Choosing <i>Create camera + plate</i> creates:</p>
   <table>
     <tr><td><code>shotCam_&lt;seq&gt;_&lt;shot&gt;</code></td><td>The shot camera. Focal length from the shot on
       ShotGrid, filmback (sensor size) from the camera linked to the shot. You look through it straight away.</td></tr>
@@ -45,9 +46,8 @@
       the newest plate version, EXR first. Frame 1001 in Maya shows plate frame 1001.</td></tr>
     <tr><td>Scene</td><td>Render resolution and pixel aspect of the plate, and the shot's frame range.</td></tr>
   </table>
-  <p>It happens once per scene; a small message at the top of the viewport tells you it ran.
-  <kbd>Ctrl</kbd>+<kbd>Z</kbd> takes it all back in one step. Opening an existing work file never changes it by itself. Only when that file is still
-  completely empty, Shot Setup asks once whether you want the camera and plate; it doesn't ask again for that file.</p>
+  <p>A small message at the top of the viewport tells you it ran; <kbd>Ctrl</kbd>+<kbd>Z</kbd> takes it all back
+  in one step. A scene with content is never changed by itself.</p>
 
   <h2>Scenes that already have content</h2>
   <p>The automatic setup only runs on a new scene. For a scene that already has things in it, choose
@@ -99,7 +99,7 @@
   <p>For a whole config: <code>shot_setup_auto: false</code> under <code>tk-multi-startup</code>. On one machine:
   environment variable <code>NFA_SHOT_SETUP_AUTO=0</code>. The menu item keeps working.</p>
 
-  <footer>NFA Shot Setup v1.5.0 · Luuk Kamphuis</footer>
+  <footer>NFA Shot Setup v1.6.0 · Luuk Kamphuis</footer>
 </main>
 </body>
 </html>

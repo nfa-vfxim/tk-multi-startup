@@ -20,7 +20,7 @@ import traceback
 
 from . import scene, sg_data
 
-__version__ = "1.5.0"
+__version__ = "1.6.0"
 __author__ = "Luuk Kamphuis"
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -89,8 +89,8 @@ ASKED_OPTIONVAR = "nfaShotSetupAsked"
 
 def auto_mode():
     """
-    'auto' -> new, unsaved, empty shot scene: set it up without asking.
-    'ask'  -> a saved work file that is empty and was never set up: ask once.
+    'ask'  -> an empty shot scene (new or saved) that was never set up and
+              wasn't asked about yet: ask once.
     None   -> leave the scene alone.
     """
     import maya.cmds as cmds
@@ -104,10 +104,22 @@ def auto_mode():
         return None
     if scene.was_set_up() or not scene.is_empty_scene():
         return None
+    if _was_asked(_shot_key()):
+        return None                     # "Not now" for this shot task earlier: never ask again
     path = cmds.file(query=True, sceneName=True)
     if not path:
-        return "auto"
+        return "ask"
     return None if _was_asked(path) else "ask"
+
+
+def _shot_key():
+    """'shot:<id>:<step>' for the current task, remembered when someone says Not now."""
+    engine = _engine()
+    ctx = engine.context if engine else None
+    if not ctx or not ctx.entity:
+        return ""
+    step = (ctx.step or {}).get("name") or ""
+    return "shot:%s:%s" % (ctx.entity.get("id"), step.lower())
 
 
 def should_auto_setup():
@@ -148,14 +160,19 @@ def _ask(path):
     box.setWindowTitle("NFA Shot Setup")
     box.setIcon(dialog.QtWidgets.QMessageBox.Question)
     box.setText("This shot scene is empty.\n\nCreate the shot camera and the plate (backplate) now?")
-    box.setInformativeText("You won't be asked again for this file. You can always do it later with "
-                           "ShotGrid > Shot Setup...")
+    box.setInformativeText("You won't be asked again for this shot. You can always do it later with "
+                           "ShotGrid > Create Shot Camera + Plate.")
     yes = box.addButton("Create camera + plate", dialog.QtWidgets.QMessageBox.AcceptRole)
     box.addButton("Not now", dialog.QtWidgets.QMessageBox.RejectRole)
     box.setDefaultButton(yes)
     dialog._exec(box)
-    _remember_asked(path)
-    return box.clickedButton() is yes
+    accepted = box.clickedButton() is yes
+    if path:
+        _remember_asked(path)
+    if not accepted and _shot_key():
+        # Not now: don't ask again for this shot task, also not in a new scene
+        _remember_asked(_shot_key())
+    return accepted
 
 
 def auto_setup():
@@ -169,14 +186,15 @@ def auto_setup():
         mode = auto_mode()
         if mode is None:
             return None
-        if mode == "ask" and not _ask(cmds.file(query=True, sceneName=True)):
+        path = cmds.file(query=True, sceneName=True)
+        if not _ask(path):
             return None
         data = sg_data.load(current_source())
         done = scene.build(data, __version__)
         _log("Set up shot %s: %s" % (data.shot_code, ", ".join(done)))
         _toast("Shot Setup: camera %.4g mm%s" % (
             data.focal, (" + plate " + (data.plate.version or "")) if data.plate else " (no plate found)"))
-        if mode == "auto":
+        if not path:
             # A freshly set-up new scene shouldn't ask to be saved before anyone touched it
             cmds.file(modified=False)
         return done
