@@ -47,6 +47,9 @@ class TkMultiStartup(sgtk.platform.Application):
     # ---- NFA Shot Setup (Maya): shot camera + plate image plane on first open
     def _init_shot_setup(self, shot_setup):
         self._shot_setup = shot_setup
+        steps = self.get_setting("shot_setup_steps")
+        if steps:
+            shot_setup.ALLOWED_STEPS = list(steps)
         menu_name = self.get_setting("shot_setup_menu_name")
         if menu_name and self.context.entity and self.context.entity.get("type") == "Shot":
             self.engine.register_command(

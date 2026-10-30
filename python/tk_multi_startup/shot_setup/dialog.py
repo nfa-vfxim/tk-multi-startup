@@ -357,6 +357,16 @@ class ShotSetupDialog(QtWidgets.QDialog):
 
         self.all_btn.setText("Update shot" if st["marker"] else "Set up shot")
 
+        # Only the layout task may create/change things; elsewhere the window only shows
+        from . import step_allowed, current_step_name, ALLOWED_STEPS
+        if not step_allowed():
+            for b in (self.cam_btn, self.plate_btn, self.scene_btn, self.all_btn):
+                b.setEnabled(False)
+            self.track_card.hide()
+            self.status.setText("View only: Shot Setup creates the camera and plate in the %s task "
+                                "(you're in %s)." % (" / ".join(ALLOWED_STEPS), current_step_name() or "another task"))
+            return
+
         # Once the tracked camera is in, Shot Setup only shows; it changes nothing
         tracked = bool(st["matchmove"])
         self.track_card.setVisible(tracked)

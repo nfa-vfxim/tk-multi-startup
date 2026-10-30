@@ -1,5 +1,10 @@
 # NFA Shot Setup — Changelog
 
+## tk-multi-startup 3.0.6 — 2026-10-30 (Luuk)
+- Camera and plate are only created in a **layout** task: the automatic setup, the ask-once question and
+  *Create Shot Camera + Plate* do nothing in animation, lighting etc. (the menu item says why). The Shot
+  Setup window is view-only there. Steps are configurable with `shot_setup_steps` (default `[layout]`).
+
 ## tk-multi-startup 3.0.5 — 2026-10-26 (Luuk)
 - New menu item **ShotGrid > Create Shot Camera + Plate**: one click adds the shot camera and the plate to
   any shot scene, also one that already has content. Asks first when the shot camera is already there

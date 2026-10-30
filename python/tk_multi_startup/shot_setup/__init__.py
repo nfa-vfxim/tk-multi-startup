@@ -20,7 +20,7 @@ import traceback
 
 from . import scene, sg_data
 
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 __author__ = "Luuk Kamphuis"
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -28,6 +28,8 @@ HELP_PATH = os.path.join(HERE, "HELP.html")
 CHANGELOG_PATH = os.path.join(HERE, "CHANGELOG.md")
 
 _WINDOW = None
+# Pipeline steps where Shot Setup may create/change things (set from the app setting shot_setup_steps)
+ALLOWED_STEPS = ["layout"]
 _RUNNING = False
 
 
@@ -45,6 +47,25 @@ def _engine():
     except ImportError:
         return None
     return sgtk.platform.current_engine()
+
+
+def current_step_name():
+    engine = _engine()
+    step = engine.context.step if engine else None
+    return (step or {}).get("name") or ""
+
+
+def step_allowed():
+    """Only in the steps listed in shot_setup_steps (default: layout)."""
+    name = current_step_name().strip().lower()
+    return bool(name) and name in [s.strip().lower() for s in ALLOWED_STEPS]
+
+
+def not_allowed_text():
+    step = current_step_name() or "this task"
+    return ("Shot Setup only creates the shot camera and plate in a %s task.\n\n"
+            "You're in %s. Open the shot's layout task through ShotGrid > File Open."
+            % (" / ".join(ALLOWED_STEPS), step))
 
 
 def current_source():
@@ -78,6 +99,8 @@ def auto_mode():
     engine = _engine()
     entity = engine.context.entity if engine else None
     if not entity or entity.get("type") != "Shot":
+        return None
+    if not step_allowed():
         return None
     if scene.was_set_up() or not scene.is_empty_scene():
         return None
@@ -193,6 +216,9 @@ def create_now():
         src = current_source()
     except sg_data.NotAvailable as e:
         dialog.message("NFA Shot Setup", str(e), error=True)
+        return None
+    if not step_allowed():
+        dialog.message("NFA Shot Setup", not_allowed_text(), error=True)
         return None
 
     st = scene.state()

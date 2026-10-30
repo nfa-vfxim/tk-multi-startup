@@ -63,5 +63,7 @@ checks and updates it later. Code, help and changelog: `python/tk_multi_startup/
 
 - `shot_setup_menu_name`
     - type: `str`, default `Shot Setup` (empty hides the menu item)
+- `shot_setup_steps`
+    - type: `list`, default `[layout]`: steps where the camera and plate are created
 - `shot_setup_auto`
     - type: `bool`, default `true`. `NFA_SHOT_SETUP_AUTO=0` turns it off on one machine.
